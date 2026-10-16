@@ -16,3 +16,6 @@ __pycache__/
 # Raw and processed datasets
 data/raw/*
 data/processed/*
+data.zip
+
+archive/
