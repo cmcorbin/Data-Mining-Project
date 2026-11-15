@@ -1,21 +1,28 @@
-# Python virtual environments
+# Python environments
 .venv/
 venv/
-
-# Python cache files
 __pycache__/
-*.py[cod]
+*.pyc
 
-# Jupyter temporary files
-.ipynb_checkpoints/
+# Original and intermediate datasets
+data/raw/
+data/interim/
 
-# Environment variables and secrets
-.env
-.env.*
-
-# Raw and processed datasets
-data/raw/*
-data/processed/*
-data.zip
+# Event-level processed datasets
+data/processed/final_earnings_event_dataset.csv
+data/processed/earnings_with_price_match.csv
+data/processed/eligible_prices.csv
+data/processed/cleaned_earnings.csv
+data/processed/cleaned_prices.csv
+data/processed/eligible_earnings.csv
 
 archive/
+
+
+# Temporary files
+*.log
+.ipynb_checkpoints/
+
+# Operating system
+.DS_Store
+Thumbs.db

@@ -1,0 +1,4 @@
+variable,available_count,available_percentage,missing_count,missing_percentage
+eps_beat,83166,62.17786250981272,50589,37.82213749018729
+previous_quarter_beat,80498,60.18317072258981,53257,39.81682927741019
+momentum_10_trading_days,133483,99.79664311614519,272,0.20335688385480916

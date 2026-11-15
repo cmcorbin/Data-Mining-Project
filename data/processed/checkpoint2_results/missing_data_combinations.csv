@@ -1,0 +1,9 @@
+missing_combination,event_count,percentage
+No missing variables,78774,58.89424694403947
+"eps_beat, previous_quarter_beat",48919,36.57358603416695
+previous_quarter_beat,4220,3.1550222421591716
+eps_beat,1570,1.1737878957795969
+momentum_10_trading_days,148,0.11065006915629322
+"eps_beat, previous_quarter_beat, momentum_10_trading_days",94,0.07027774662629434
+"previous_quarter_beat, momentum_10_trading_days",24,0.017943254457777277
+"eps_beat, momentum_10_trading_days",6,0.004485813614444319

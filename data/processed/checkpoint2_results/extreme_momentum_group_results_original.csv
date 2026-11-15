@@ -1,0 +1,5 @@
+sample,group,previous_quarter_beat,momentum_group,events,beats,beat_rate_percent
+Original complete-case sample,"Previous did not beat, non-positive momentum",0,Non-positive,14781,6352,42.97408835667411
+Original complete-case sample,"Previous did not beat, positive momentum",0,Positive,16947,8262,48.75199150292087
+Original complete-case sample,"Previous beat, non-positive momentum",1,Non-positive,20903,14103,67.4687843850165
+Original complete-case sample,"Previous beat, positive momentum",1,Positive,26143,18727,71.63294189649237

@@ -1,0 +1,5 @@
+missing_category,event_count,percentage
+Complete - no missing variables,78774,58.89424694403947
+Missing exactly one variable,5938,4.4394602070950615
+Missing exactly two variables,48949,36.59601510223917
+Missing all three variables,94,0.07027774662629434

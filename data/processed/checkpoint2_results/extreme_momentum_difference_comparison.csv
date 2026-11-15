@@ -1,0 +1,5 @@
+comparison,original_difference,filtered_difference,change_in_difference_pp
+Momentum effect when previous earnings did not beat,5.777903146246764,5.799475844946002,0.021572698699237947
+Momentum effect when previous earnings beat,4.164157511475864,4.173776231077326,0.009618719601462544
+Previous earnings effect with positive momentum,22.880950393571496,22.895704399332374,0.01475400576087793
+Previous earnings effect with non-positive momentum,24.494696028342396,24.52140401320105,0.026707984858653333

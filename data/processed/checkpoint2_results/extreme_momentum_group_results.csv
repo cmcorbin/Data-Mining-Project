@@ -1,0 +1,5 @@
+sample,group,previous_quarter_beat,momentum_group,events,beats,beat_rate_percent
+Excluding extreme-momentum events,"Previous did not beat, non-positive momentum",0,Non-positive,14766,6345,42.9703372612759
+Excluding extreme-momentum events,"Previous did not beat, positive momentum",0,Positive,16908,8246,48.7698131062219
+Excluding extreme-momentum events,"Previous beat, non-positive momentum",1,Non-positive,20887,14097,67.49174127447695
+Excluding extreme-momentum events,"Previous beat, positive momentum",1,Positive,26106,18709,71.66551750555428

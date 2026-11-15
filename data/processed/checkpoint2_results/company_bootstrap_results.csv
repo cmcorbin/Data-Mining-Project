@@ -1,0 +1,9 @@
+analysis,comparison,observed_difference_or_rate,bootstrap_mean,ci_lower_95,ci_upper_95,bootstrap_probability_positive,valid_iterations
+Group beat rate,"Previous did not beat, non-positive momentum",0.42974088356674106,0.4297910392064201,0.4191448373108984,0.44082013191661557,,5000
+Group beat rate,"Previous did not beat, positive momentum",0.4875199150292087,0.48753681521915443,0.4763806715905458,0.4983793433554582,,5000
+Group beat rate,"Previous beat, non-positive momentum",0.674687843850165,0.6747205595454332,0.6666181888181871,0.6829078964183368,,5000
+Group beat rate,"Previous beat, positive momentum",0.7163294189649236,0.7162916999271295,0.7089081650819107,0.7235287220809543,,5000
+Difference in beat rates,Momentum effect when previous earnings did not beat,0.057779031462467656,0.05774577601273435,0.04658066727027783,0.06883241890435017,1.0,5000
+Difference in beat rates,Momentum effect when previous earnings beat,0.04164157511475863,0.04157114038169633,0.03332326937110977,0.0498390372140977,1.0,5000
+Difference in beat rates,Previous earnings effect with positive momentum,0.22880950393571492,0.2287548847079751,0.2167310162816275,0.24098268268725032,1.0,5000
+Difference in beat rates,Previous earnings effect with non-positive momentum,0.24494696028342394,0.2449295203390131,0.23208128918997173,0.2576279507833247,1.0,5000

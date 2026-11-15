@@ -1,0 +1,5 @@
+group,original_events,original_beats,original_beat_rate,filtered_events,filtered_beats,filtered_beat_rate,change_in_events,change_in_beat_rate_pp
+"Previous did not beat, non-positive momentum",14781,6352,42.97408835667411,14766,6345,42.9703372612759,-15,-0.0037510953982078377
+"Previous did not beat, positive momentum",16947,8262,48.75199150292087,16908,8246,48.7698131062219,-39,0.01782160330103011
+"Previous beat, non-positive momentum",20903,14103,67.4687843850165,20887,14097,67.49174127447695,-16,0.022956889460445495
+"Previous beat, positive momentum",26143,18727,71.63294189649237,26106,18709,71.66551750555428,-37,0.03257560906190804
