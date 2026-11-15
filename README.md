@@ -4,7 +4,7 @@
 
 This project investigates whether a company's previous earnings performance and recent stock-price momentum can help predict whether its next earnings announcement will beat analyst EPS estimates.
 
-Each row in the final dataset represents an individual earnings announcement event. The dataset combines historical earnings information with adjusted stock prices to create features for later statistical analysis and machine learning.
+Each row in the final dataset represents an individual earnings announcement event. The dataset combines historical earnings information with adjusted stock prices to create features for statistical analysis and machine learning.
 
 ## Research Question
 
@@ -14,15 +14,21 @@ Do a company's previous earnings beat/miss result and its 10-trading-day stock-p
 
 ```text
 GroupProject/
-├── data/                         # Download separately (see Data Access)
+├── data/                              # Download separately (see Data Access)
 │   ├── raw/
 │   └── processed/
+│       ├── final_earnings_event_dataset.csv
+│       └── checkpoint2_results/
 ├── prepare_earnings_and_prices.py
 ├── calculate_earnings_beat_and_momentum.py
+├── analyze_checkpoint2_results.py
+├── analyze_company_bootstrap.py
+├── analyze_missing_data.py
+├── analyze_extreme_momentum.py
 └── README.md
 ```
 
-The data files are not included in this repository and must be obtained separately.
+The data files are not included in this repository and must be obtained separately. Aggregate analysis results are saved in `data/processed/checkpoint2_results/`.
 
 ## Data Source and Citation
 
@@ -164,7 +170,7 @@ The dataset is retained before any optional modeling filters are applied.
 
 ## Checkpoint 1 Results
 
-The latest reported feature-engineering run produced the following results:
+The reported feature-engineering run produced the following results:
 
 | Metric | Count |
 |---|---:|
@@ -176,9 +182,199 @@ The latest reported feature-engineering run produced the following results:
 
 These counts describe the reported runs and should be rechecked if the raw data or scripts change.
 
+## Checkpoint 2 Analysis
+
+Checkpoint 2 extends the initial data preparation and feature-engineering work by comparing earnings beat rates across the four combinations of previous earnings performance and 10-trading-day momentum.
+
+The primary analysis uses earnings events with complete values for the current EPS beat indicator, previous earnings beat indicator, and momentum. Each observation represents an earnings announcement event.
+
+### 1. Four-Group Earnings Beat Comparison
+
+**Script:** `analyze_checkpoint2_results.py`
+
+This script analyzes the complete-case dataset and compares current earnings beat rates across four groups:
+
+1. Previous earnings did not beat, non-positive momentum.
+2. Previous earnings did not beat, positive momentum.
+3. Previous earnings beat, non-positive momentum.
+4. Previous earnings beat, positive momentum.
+
+Momentum is classified as positive when the 10-trading-day return is greater than zero. Values at or below zero are classified as non-positive.
+
+The earnings beat rate is calculated as:
+
+\[
+\text{Beat Rate}=\frac{\text{Number of EPS Beats}}{\text{Total Earnings Events}}\times100
+\]
+
+#### Preliminary Group Results
+
+The complete-case analysis contains 78,774 earnings events.
+
+| Previous earnings result | Momentum | Events | EPS Beats | Beat Rate |
+|---|---|---:|---:|---:|
+| Did not beat | Non-positive | 14,781 | 6,352 | 42.97% |
+| Did not beat | Positive | 16,947 | 8,262 | 48.75% |
+| Beat | Non-positive | 20,903 | 14,103 | 67.47% |
+| Beat | Positive | 26,143 | 18,727 | 71.63% |
+
+The highest observed beat rate occurs when the previous earnings event beat and momentum is positive (71.63%). The lowest occurs when the previous earnings event did not beat and momentum is non-positive (42.97%).
+
+Within both previous earnings groups, positive momentum is associated with a higher observed beat rate.
+
+### 2. Confidence Interval Analysis
+
+The analysis calculates Wilson 95% confidence intervals for each group's earnings beat rate.
+
+Newcombe-Wilson confidence intervals are also calculated for differences between group beat rates. These intervals provide an estimate of uncertainty around the observed percentage-point differences.
+
+The four comparisons are:
+
+- Positive versus non-positive momentum when the previous earnings event did not beat.
+- Positive versus non-positive momentum when the previous earnings event beat.
+- Previous earnings beat versus non-beat among positive-momentum events.
+- Previous earnings beat versus non-beat among non-positive-momentum events.
+
+These comparisons help evaluate whether the observed differences are distinguishable from zero under the interval method's assumptions.
+
+### 3. Company-Level Bootstrap Analysis
+
+**Script:** `analyze_company_bootstrap.py`
+
+Because individual companies can contribute multiple earnings announcements, treating every event as fully independent may understate uncertainty.
+
+To address repeated observations from the same company, a company-level bootstrap procedure is performed.
+
+The procedure:
+
+1. Samples entire companies with replacement.
+2. Retains all eligible complete-case earnings events belonging to each sampled company.
+3. Recalculates the four group beat rates and their differences.
+4. Repeats the process 5,000 times.
+5. Uses the 2.5th and 97.5th percentiles of the bootstrap distributions to calculate 95% confidence intervals.
+
+A fixed random seed is used to make the analysis reproducible. Companies selected more than once contribute their earnings events multiple times within that bootstrap iteration.
+
+The complete-case sample contains 78,774 events from 2,784 companies.
+
+#### Company-Level Bootstrap Results
+
+| Comparison | Observed Difference | 95% Bootstrap Confidence Interval |
+|---|---:|---:|
+| Momentum effect when previous earnings did not beat | +5.78 pp | [4.66, 6.88] pp |
+| Momentum effect when previous earnings beat | +4.16 pp | [3.33, 4.98] pp |
+| Previous earnings effect with positive momentum | +22.88 pp | [21.67, 24.10] pp |
+| Previous earnings effect with non-positive momentum | +24.49 pp | [23.21, 25.76] pp |
+
+All four bootstrap confidence intervals are above zero. All 5,000 iterations produced positive differences for each comparison.
+
+This provides additional evidence that the observed group differences remain positive when repeated observations from the same company are accounted for through company-level resampling.
+
+The bootstrap does not establish causation or eliminate possible selection bias from missing observations.
+
+### 4. Missing-Data Analysis
+
+**Script:** `analyze_missing_data.py`
+
+The missing-data analysis examines the availability of the three variables required for the four-group comparison across all 133,755 earnings events.
+
+It calculates:
+
+- Available and missing observations for each required variable.
+- The number of events missing exactly one, two, or all three variables.
+- The specific combinations of variables that are missing.
+- The overall number and percentage of complete and incomplete observations.
+
+#### Missing Data by Variable
+
+| Variable | Available Events | Missing Events |
+|---|---:|---:|
+| Current EPS beat | 83,166 (62.18%) | 50,589 (37.82%) |
+| Previous earnings beat | 80,498 (60.18%) | 53,257 (39.82%) |
+| 10-day momentum | 133,483 (99.80%) | 272 (0.20%) |
+
+#### Missing Data by Number of Variables
+
+| Category | Events | Percentage |
+|---|---:|---:|
+| No missing variables | 78,774 | 58.89% |
+| Missing exactly one variable | 5,938 | 4.44% |
+| Missing exactly two variables | 48,949 | 36.60% |
+| Missing all three variables | 94 | 0.07% |
+| Total incomplete observations | 54,981 | 41.11% |
+
+The largest missing-value combination consists of events missing both the current EPS beat and previous earnings beat indicators. This combination accounts for 48,919 events (36.57% of the full dataset).
+
+The results indicate that missing earnings information is the primary reason observations are excluded from the four-group comparison. Historical momentum information is available for nearly all events.
+
+Because the primary analysis uses complete observations only, the results may not represent all earnings events in the original dataset. Potential selection bias should be considered when interpreting the observed relationships.
+
+### 5. Extreme-Momentum Sensitivity Analysis
+
+**Script:** `analyze_extreme_momentum.py`
+
+An additional sensitivity analysis examines whether the four-group results are substantially affected by observations flagged for extreme daily price movements within the ten-trading-day momentum windows.
+
+The original complete-case sample retains all flagged observations. For the sensitivity analysis, complete-case events explicitly flagged for extreme daily price movements are excluded, and the four-group beat rates are recalculated.
+
+The original complete-case sample contains 78,774 events. Excluding the 107 complete-case events flagged for extreme daily price movements produces a filtered sample of 78,667 events.
+
+#### Original and Filtered Beat Rates
+
+| Previous earnings result | Momentum | Original Beat Rate | Filtered Beat Rate |
+|---|---|---:|---:|
+| Did not beat | Non-positive | 42.97% | 42.97% |
+| Did not beat | Positive | 48.75% | 48.77% |
+| Beat | Non-positive | 67.47% | 67.49% |
+| Beat | Positive | 71.63% | 71.67% |
+
+#### Comparison of Group Differences
+
+| Comparison | Original Difference | Filtered Difference |
+|---|---:|---:|
+| Momentum effect when previous earnings did not beat | +5.78 pp | +5.80 pp |
+| Momentum effect when previous earnings beat | +4.16 pp | +4.17 pp |
+| Previous earnings effect with positive momentum | +22.88 pp | +22.90 pp |
+| Previous earnings effect with non-positive momentum | +24.49 pp | +24.52 pp |
+
+The results remain nearly identical after excluding extreme-momentum observations. The small changes suggest that these flagged observations do not materially drive the observed relationships.
+
+The original complete-case sample is retained for the primary analysis, while the filtered results serve as an additional robustness check.
+
+### 6. Interpretation of Checkpoint 2 Results
+
+The four-group comparison shows that previous earnings performance and positive pre-announcement momentum are both associated with higher observed EPS beat rates.
+
+The group with a previous earnings beat and positive momentum has the highest observed beat rate (71.63%), while the group with a previous earnings non-beat and non-positive momentum has the lowest (42.97%).
+
+The confidence interval and company-level bootstrap analyses show that all four observed differences remain positive under the respective uncertainty calculations. The sensitivity analysis also indicates that excluding extreme-momentum observations has very little effect on the results.
+
+These findings are consistent with the original hypothesis. However, the analysis is observational and does not establish that previous earnings performance or stock momentum causes a subsequent earnings beat. Missing earnings information, repeated observations, and the use of the previous available earnings event as a proxy for the previous fiscal quarter remain important methodological considerations.
+
+## Analysis Output Files
+
+The Checkpoint 2 scripts save aggregate results in `data/processed/checkpoint2_results/`.
+
+| File | Description |
+|---|---|
+| `beat_rate_confidence_intervals.csv` | Wilson confidence intervals for the four group beat rates |
+| `beat_rate_difference_confidence_intervals.csv` | Newcombe-Wilson confidence intervals for group differences |
+| `company_bootstrap_results.csv` | Summary of company-level bootstrap results |
+| `company_bootstrap_iterations.csv` | Results from individual bootstrap iterations |
+| `missing_data_by_variable.csv` | Available and missing counts for each variable |
+| `missing_data_by_category.csv` | Counts by number of missing variables |
+| `missing_data_combinations.csv` | Specific combinations of missing variables |
+| `missing_data_overall_summary.csv` | Overall complete and incomplete observation counts |
+| `extreme_momentum_group_results_original.csv` | Original complete-case group results |
+| `extreme_momentum_group_results.csv` | Group results after excluding flagged events |
+| `extreme_momentum_rate_comparison.csv` | Original versus filtered beat-rate comparison |
+| `extreme_momentum_difference_comparison.csv` | Original versus filtered group-difference comparison |
+
 ## Running the Pipeline
 
 Run the commands from the project root directory with the Python virtual environment activated.
+
+**Data preparation and feature engineering:**
 
 ```bash
 python prepare_earnings_and_prices.py
@@ -186,6 +382,19 @@ python calculate_earnings_beat_and_momentum.py
 ```
 
 The second script should run after the first because it depends on the processed earnings and price data.
+
+**Checkpoint 2 analysis:**
+
+```bash
+python analyze_checkpoint2_results.py
+python analyze_company_bootstrap.py
+python analyze_missing_data.py
+python analyze_extreme_momentum.py
+```
+
+The Checkpoint 2 analysis scripts depend on `data/processed/final_earnings_event_dataset.csv`, which must be generated by the data-processing pipeline.
+
+The aggregate output files are saved in `data/processed/checkpoint2_results/`.
 
 ## Important Methodological Considerations
 
@@ -195,7 +404,9 @@ The second script should run after the first because it depends on the processed
 - Verify that previous-event earnings labels align with the intended previous-quarter definition.
 - Document exclusions and compare modeling results with and without flagged observations.
 - Avoid data leakage when splitting observations into training and test sets, especially because each company can contribute multiple earnings events.
+- Interpret the confidence intervals and bootstrap results as measures of uncertainty around observed associations, not proof of causation.
+- Recognize that the complete-case analysis excludes events with missing earnings information, which may introduce selection bias.
 
 ## Acknowledgments
 
-The original earnings and stock-price data are attributed to the Kaggle dataset cited above. The cleaning, matching, feature engineering, and subsequent analysis are performed as part of this project.
+The original earnings and stock-price data are attributed to the Kaggle dataset cited above. The cleaning, matching, feature engineering, statistical comparisons, and subsequent analysis are performed as part of this project.
